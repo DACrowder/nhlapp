@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gorilla/mux"
+
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	"github.com/tkanos/gonfig"
 )
@@ -17,6 +20,17 @@ type Configuration struct {
 var Db *sqlx.DB
 var connStr = "user=Doyle dbname=nhlapp sslmode=disable"
 
+// IsUniqueViolation returns true if the supplied error resulted from
+// a unique constraint violation
+// thanks for the function Nick
+func IsUniqueViolation(err error) bool {
+	if err, ok := err.(*pq.Error); ok {
+		return err.Code == "23505"
+	}
+
+	return false
+}
+
 func main() {
 	conf := Configuration{}
 	err := gonfig.GetConf("config.json", &conf)
@@ -27,15 +41,21 @@ func main() {
 
 	fmt.Printf("%v\n", conf)
 
-	Db, err := sqlx.Connect("postgres", conf.ConnStr)
+	Db, err = sqlx.Connect("postgres", conf.ConnStr)
 	if err != nil {
 		//cannot connect to database
 		log.Fatal(err)
 	}
 
-	Db.Close()
+	r := mux.NewRouter()
 
-	Scrape("2017020028")
+	r.HandleFunc("/shiftapi/v1/{game_id}", displayGame).Methods("GET")
+
+	//http.ListenAndServe(":9999", r)
+
+	scrape("2017020028")
 
 	GetEvents("2017020028")
+
+	Db.Close()
 }
