@@ -21,4 +21,6 @@ func main() {
 	Db.Close()
 
 	Scrape("2017020028")
+
+	GetEvents("2017020028")
 }
