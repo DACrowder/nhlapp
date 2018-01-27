@@ -40,6 +40,7 @@ func main() {
 
 	scrape("2017020028")
 
-	Db.Close()
+	GetEvents("2017020028")
 
+	Db.Close()
 }
