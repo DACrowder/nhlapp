@@ -10,7 +10,13 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+	_ "github.com/lib/pq"
+	"github.com/tkanos/gonfig"
 )
+
+type Configuration struct {
+	ConnStr string
+}
 
 // Db - database pointer to main storage database
 var Db *sqlx.DB
@@ -37,8 +43,16 @@ func TimeConvert(timeString string) (int, error) {
 }
 
 func main() {
-	var err error
-	Db, err = sqlx.Connect("postgres", connStr)
+	conf := Configuration{}
+	err := gonfig.GetConf("config.json", &conf)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%v\n", conf)
+
+	Db, err = sqlx.Connect("postgres", conf.ConnStr)
 	if err != nil {
 		//cannot connect to database
 		log.Fatal(err)
