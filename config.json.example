@@ -1,0 +1,3 @@
+{
+    "ConnStr" : "user=USERNAME dbname=nhlapp sslmode=disable"
+}
