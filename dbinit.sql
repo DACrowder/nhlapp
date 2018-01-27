@@ -9,6 +9,8 @@ create table event (
     player2_id int,
     player1_type text,
     player2_type text,
+    player1_team text,
+    player2_team text,
     coord_x int,
     coord_y int,
     period int,
