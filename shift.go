@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/lib/pq"
 )
 
 type shift struct {
 	Data []struct {
 		DetailCode       int         `json:"detailCode"`
 		Duration         string      `json:"duration"`
-		EndTime          string      `json:"endTime"`
+		EndTime          string      `json:"endTime" db:"time_end"`
 		EventDescription interface{} `json:"eventDescription"`
 		EventDetails     interface{} `json:"eventDetails"`
 		EventNumber      int         `json:"eventNumber"`
@@ -19,10 +21,10 @@ type shift struct {
 		GameID           int         `json:"gameId"`
 		HexValue         string      `json:"hexValue"`
 		LastName         string      `json:"lastName"`
-		Period           int         `json:"period"`
-		PlayerID         int         `json:"playerId"`
+		Period           int         `json:"period" db:"period"`
+		PlayerID         int         `json:"playerId" db:"player_start"`
 		ShiftNumber      int         `json:"shiftNumber"`
-		StartTime        string      `json:"startTime"`
+		StartTime        string      `json:"startTime" db:"time_start"`
 		TeamAbbrev       string      `json:"teamAbbrev"`
 		TeamID           int         `json:"teamId"`
 		TeamName         string      `json:"teamName"`
@@ -32,7 +34,7 @@ type shift struct {
 }
 
 // Scrape pull shift data from nhl API
-func Scrape(gameID string) {
+func scrape(gameID string) {
 	apiURL := fmt.Sprintf("http://www.nhl.com/stats/rest/shiftcharts?cayenneExp=gameId=%s", gameID)
 	fmt.Println(apiURL)
 	client := &http.Client{}
@@ -51,21 +53,16 @@ func Scrape(gameID string) {
 	dataDec := json.NewDecoder(response.Body)
 	dataDec.Decode(&data)
 
-	for _, data := range data.Data {
-		fmt.Printf("p: %d, s: %s, d: %s\n", data.PlayerID, data.StartTime, data.EndTime)
-		q := `INSERT INTO shift (player_id, period, time_start, time_end)	
-					VALUES ($1, $2, $3, $4)`
-		result, err := Db.Exec(q, data.PlayerID, data.Period, data.StartTime, data.EndTime)
+	for _, shiftSlice := range data.Data {
+		//fmt.Printf("p: %d, s: %s, d: %s\n", shiftSlice.PlayerID, shiftSlice.StartTime, shiftSlice.EndTime)
+
+		q := `INSERT INTO shift (game_id, player_id, period, time_start, time_end)
+						VALUES ($1, $2, $3, $4, $5)`
+		_, err := Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, shiftSlice.StartTime, shiftSlice.EndTime)
 		if err != nil {
-			log.Println(err)
+			log.Fatal(err)
 			return
 		}
-		count, err := result.RowsAffected()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Printf("Number of shifts recorded = %d\n", count)
 	}
 
 }

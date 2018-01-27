@@ -12,13 +12,14 @@ var Db *sqlx.DB
 var connStr = "user=Doyle dbname=nhlapp sslmode=disable"
 
 func main() {
-	Db, err := sqlx.Connect("postgres", connStr)
+	var err error
+	Db, err = sqlx.Connect("postgres", connStr)
 	if err != nil {
 		//cannot connect to database
 		log.Fatal(err)
 	}
+	scrape("2017020028")
 
 	Db.Close()
 
-	Scrape("2017020028")
 }
