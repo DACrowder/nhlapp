@@ -42,16 +42,22 @@ func scrape(gameID string) {
 	request, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	response, err := client.Do(request)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	data := shift{}
 	dataDec := json.NewDecoder(response.Body)
-	dataDec.Decode(&data)
+	err = dataDec.Decode(&data)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	for _, shiftSlice := range data.Data {
 		//fmt.Printf("p: %d, s: %s, d: %s\n", shiftSlice.PlayerID, shiftSlice.StartTime, shiftSlice.EndTime)
@@ -60,6 +66,9 @@ func scrape(gameID string) {
 						VALUES ($1, $2, $3, $4, $5)`
 		_, err := Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, shiftSlice.StartTime, shiftSlice.EndTime)
 		if err != nil {
+			if IsUniqueViolation(err) {
+				continue
+			}
 			log.Fatal(err)
 			return
 		}
