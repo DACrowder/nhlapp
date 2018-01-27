@@ -21,7 +21,8 @@ create table game (
 
 create table shift (
     player_id int,
-    time_start timestamp,
-    time_end timestamp,
+    period int,
+    time_start text,
+    time_end text,
     UNIQUE(player_id, time_start, time_end)
 );
