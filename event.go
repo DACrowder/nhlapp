@@ -56,10 +56,6 @@ type Event struct {
 	} `json:"liveData"`
 }
 
-func main() {
-	GetEvents("2017020028")
-}
-
 func GetEvents(gameID string) (*Event, error) {
 	apiURL := fmt.Sprintf("https://statsapi.web.nhl.com/api/v1/game/%s/feed/live", gameID)
 
