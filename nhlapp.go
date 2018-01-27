@@ -20,7 +20,6 @@ type Configuration struct {
 
 // Db - database pointer to main storage database
 var Db *sqlx.DB
-var connStr = "user=Doyle dbname=nhlapp sslmode=disable"
 
 // IsUniqueViolation returns true if the supplied error resulted from
 // a unique constraint violation
