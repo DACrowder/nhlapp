@@ -34,6 +34,7 @@ create table event_roster (
     game_id int,
     event_id int,
     team text,
-    player_id int
+    player_id int,
+    player_pos text
     /*UNIQUE (game_id, event_id, team, player_id)*/
 );
