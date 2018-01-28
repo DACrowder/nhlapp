@@ -123,3 +123,35 @@ func getShots(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func getAny(w http.ResponseWriter, r *http.Request) {
+
+	options := r.URL.Query()
+
+	stat := options.Get("stat")
+	if stat == "" {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	}
+
+	vars := mux.Vars(r)
+
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	/*
+		stat, ok := vars["stat"]
+		if !ok {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	*/
+
+	scrape(gameID)
+	GetEvents(gameID)
+	CreateEventRoster(gameID)
+
+	getWildCard(gameID, stat)
+
+}

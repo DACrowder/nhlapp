@@ -138,7 +138,6 @@ func GetEvents(gameID string) error {
 		_, err := Db.Exec(q, cur.About.EventIdx, cur.Result.EventTypeID, player1ID, player2ID,
 			player1Type, player2Type, cur.Coordinates.X, cur.Coordinates.Y, cur.About.Period, time, data.GamePk, cur.Team.TriCode)
 		if err != nil {
-			log.Println(err)
 			if !IsUniqueViolation(err) {
 				log.Fatal(err)
 				return nil

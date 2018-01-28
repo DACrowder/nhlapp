@@ -27,7 +27,6 @@ func CreateEventRoster(gameID string) {
 
 	result, err := Db.Exec(q, gameID)
 	if err != nil {
-		log.Println(err)
 		if !IsUniqueViolation(err) {
 			log.Fatal(err)
 			return
