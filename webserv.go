@@ -28,6 +28,7 @@ func displayGame(w http.ResponseWriter, r *http.Request) {
 
 	scrape(gameID)
 	GetEvents(gameID)
+	CreateEventRoster(gameID)
 
 	q := `SELECT * FROM event WHERE game_id = $1 AND
 			player1_id = $2 AND event_type = $3`
@@ -65,6 +66,7 @@ func getPlayers(w http.ResponseWriter, r *http.Request) {
 
 	scrape(gameID)
 	GetEvents(gameID)
+	CreateEventRoster(gameID)
 
 	type players struct {
 		PlayerID int `json:"playerId"`

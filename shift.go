@@ -25,7 +25,7 @@ type shift struct {
 		PlayerID         int         `json:"playerId" db:"player_start"`
 		ShiftNumber      int         `json:"shiftNumber"`
 		StartTime        string      `json:"startTime" db:"time_start"`
-		TeamAbbrev       string      `json:"teamAbbrev"`
+		TeamAbbrev       string      `json:"teamAbbrev" db:"team"`
 		TeamID           int         `json:"teamId"`
 		TeamName         string      `json:"teamName"`
 		TypeCode         int         `json:"typeCode"`
@@ -59,8 +59,8 @@ func scrape(gameID string) {
 	}
 
 	for _, shiftSlice := range data.Data {
-		q := `INSERT INTO shift (game_id, player_id, period, time_start, time_end)
-						VALUES ($1, $2, $3, $4, $5)`
+		q := `INSERT INTO shift (game_id, player_id, period, time_start, time_end, team)
+						VALUES ($1, $2, $3, $4, $5, $6)`
 		startInt, err := TimeConvert(shiftSlice.StartTime)
 		if err != nil {
 			log.Println(err)
@@ -71,7 +71,7 @@ func scrape(gameID string) {
 			log.Println(err)
 			return
 		}
-		_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt)
+		_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt, shiftSlice.TeamAbbrev)
 		if err != nil {
 			if IsUniqueViolation(err) {
 				continue
@@ -80,5 +80,4 @@ func scrape(gameID string) {
 			return
 		}
 	}
-
 }
