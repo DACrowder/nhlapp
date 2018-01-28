@@ -63,5 +63,5 @@ func getPlayerPosition(playerID int) (string, error) {
 		return "", err
 	}
 
-	return data.People[0].PrimaryPosition.Abbreviation;
+	return data.People[0].PrimaryPosition.Abbreviation, nil
 }
