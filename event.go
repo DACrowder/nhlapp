@@ -111,8 +111,14 @@ func GetEvents(gameID string) error {
 	var player2ID int
 	var player1Type string
 	var player2Type string
+	var time int
 
 	for _, cur := range data.LiveData.Plays.AllPlays {
+		time, err = TimeConvert(cur.About.PeriodTime)
+		if err != nil {
+			continue
+		}
+
 		player1ID = 0
 		player1Type = ""
 		player2ID = 0
@@ -131,7 +137,7 @@ func GetEvents(gameID string) error {
 		                player1_type, player2_type, coord_x, coord_y, period, period_time, game_id)
 		                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
 		_, err := Db.Exec(q, cur.About.EventIdx, cur.Result.EventTypeID, player1ID, player2ID,
-			player1Type, player2Type, cur.Coordinates.X, cur.Coordinates.Y, cur.About.Period, cur.About.PeriodTime, data.GamePk)
+			player1Type, player2Type, cur.Coordinates.X, cur.Coordinates.Y, cur.About.Period, time, data.GamePk)
 		if err != nil {
 			if IsUniqueViolation(err) {
 				continue
