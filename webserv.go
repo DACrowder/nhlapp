@@ -211,7 +211,7 @@ func getMatchup(w http.ResponseWriter, r *http.Request) {
    		line_players = $1 AND game_id = $2) as events WHERE 
 		   events.event_id = l.event_id`
 
-	qWon := `SELECT distinct l.event_id, l.line_players  FROM  event_winners AS l,
+	qWon := `SELECT distinct l.event_id, l.line_players  FROM  event_losers AS l,
 	(SELECT event_id FROM event_winners WHERE
 	   line_players = $1 AND game_id = $2) as events WHERE 
 	   events.event_id = l.event_id`
