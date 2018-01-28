@@ -12,15 +12,16 @@ create table event (
     coord_x int,
     coord_y int,
     period int,
-    period_time text,
-    game_id int
+    period_time int,
+    game_id int,
+    UNIQUE (game_id, event_id)
 );
 
 create table shift (
     game_id int,
     player_id int,
     period int,
-    time_start text,
-    time_end text,
+    time_start int,
+    time_end int,
     UNIQUE(game_id, player_id, period, time_start, time_end)
 );

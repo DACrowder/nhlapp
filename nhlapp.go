@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -29,6 +31,15 @@ func IsUniqueViolation(err error) bool {
 	}
 
 	return false
+}
+
+// TimeConvert - converts time strings from nhl API to time Duration objects
+func TimeConvert(timeString string) (int, error) {
+	clock := strings.Split(timeString, ":")
+
+	timeFull := fmt.Sprintf("%s%s", clock[0], clock[1])
+
+	return strconv.Atoi(timeFull)
 }
 
 func main() {

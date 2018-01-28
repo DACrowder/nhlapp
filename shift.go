@@ -60,11 +60,19 @@ func scrape(gameID string) {
 	}
 
 	for _, shiftSlice := range data.Data {
-		//fmt.Printf("p: %d, s: %s, d: %s\n", shiftSlice.PlayerID, shiftSlice.StartTime, shiftSlice.EndTime)
-
 		q := `INSERT INTO shift (game_id, player_id, period, time_start, time_end)
 						VALUES ($1, $2, $3, $4, $5)`
-		_, err := Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, shiftSlice.StartTime, shiftSlice.EndTime)
+		startInt, err := TimeConvert(shiftSlice.StartTime)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		stopInt, err := TimeConvert(shiftSlice.EndTime)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt)
 		if err != nil {
 			if IsUniqueViolation(err) {
 				continue
