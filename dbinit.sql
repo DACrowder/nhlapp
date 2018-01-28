@@ -27,6 +27,7 @@ create table shift (
     time_start int,
     time_end int,
     team text,
+    player_pos text,
     UNIQUE(game_id, player_id, period, time_start, time_end, team)
 );
 
