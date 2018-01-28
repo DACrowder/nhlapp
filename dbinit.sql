@@ -1,3 +1,5 @@
+drop database if exists nhlapp;
+
 create database nhlapp;
 
 \c nhlapp
