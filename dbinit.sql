@@ -38,3 +38,13 @@ create table event_roster (
     player_id int,
     UNIQUE (game_id, event_id, team, player_id)
 );
+
+create table line (
+    line_id serial,
+    game_id int,
+    line_players text,
+    team text,
+    PRIMARY KEY (game_id, line_players)
+);
+
+
