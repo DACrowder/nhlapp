@@ -43,7 +43,7 @@ type Player struct {
 }
 
 func getPlayerPosition(playerID int) (string, error) {
-	apiURL := fmt.Sprintf("https://statsapi.web.nhl.com/api/v1/people/%s", playerID)
+	apiURL := fmt.Sprintf("https://statsapi.web.nhl.com/api/v1/people/%d", playerID)
 
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", apiURL, nil)
