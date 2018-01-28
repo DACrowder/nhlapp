@@ -24,9 +24,9 @@ func getTeamShots(gameID string, team string) (int, error) {
 }
 
 type LineData struct {
-	DataCount int    `db:"data_count" json:"linupCount"`
-	LineTmp   string `db:"line_array"`
-	Line      []int  `json:"lineup"`
+	DataCount int    `db:"data_count" json:"LineupCount"`
+	LineTmp   string `db:"line_array" json:"-"`
+	Line      []int  `json:"Lineup"`
 }
 
 type Lines struct {
@@ -135,30 +135,30 @@ func getLineShots(gameID string) (*Lines, error) {
 	return &lines, nil
 }
 
-func getWildCard(gameID string, category string) error {
+func getWildCard(gameID string, category string) (*Lines, error) {
 	q := `select distinct player1_team from event where game_id = $1 and player1_team != '';`
 	//get both teams
 	rows, err := Db.Queryx(q, gameID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lines := Lines{}
 
 	if rows.Next() {
 		if err = rows.Scan(&lines.Team1Name); err != nil {
-			return err
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	if rows.Next() {
 		if err = rows.Scan(&lines.Team2Name); err != nil {
-			return err
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	q = `select count(*) as data_count, players as line_array
@@ -177,7 +177,7 @@ func getWildCard(gameID string, category string) error {
 	/* get first team */
 	rows, err = Db.Queryx(q, gameID, category, lines.Team1Name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for rows.Next() {
@@ -203,5 +203,7 @@ func getWildCard(gameID string, category string) error {
 		fmt.Printf("%d  %s\n", lineSlice.DataCount, lineSlice.LineTmp)
 	}
 
-	return nil
+	parseLine(lines)
+
+	return &lines, nil
 }
