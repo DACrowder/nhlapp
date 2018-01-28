@@ -9,19 +9,18 @@ import (
 )
 
 type EventOut struct {
-	EventID     int    `db:"event_id" json:"eventID"`
-	EventType   string `db:"event_type" json:"eventType"`
-	Player1ID   int    `db:"player1_id" json:"player1ID"`
-	Player2ID   int    `db:"player2_id" json:"player2ID"`
-	Player1Type string `db:"player1_type" json:"player1Type"`
-	Player2Type string `db:"player2_type" json:"player2Type"`
-	Player1Team string `db:"player1_team" json:"player1Team"`
-	Player2Team string `db:"player2_team" json:"player2Team"`
-	CoordX      int    `db:"coord_x" json:"coordX"`
-	CoordY      int    `db:"coord_y" json:"coordY"`
-	Period      int    `db:"period" json:"period"`
-	PeriodTime  int    `db:"period_time" json:"periodTime"`
-	GameID      int    `db:"game_id" json:"gameID"`
+	EventID     int     `db:"event_id" json:"eventID"`
+	EventType   string  `db:"event_type" json:"eventType"`
+	Player1ID   int     `db:"player1_id" json:"player1ID"`
+	Player2ID   int     `db:"player2_id" json:"player2ID"`
+	Player1Type string  `db:"player1_type" json:"player1Type"`
+	Player2Type string  `db:"player2_type" json:"player2Type"`
+	Player1Team string  `db:"player1_team" json:"player1Team"`
+	CoordX      float32 `db:"coord_x" json:"coordX"`
+	CoordY      float32 `db:"coord_y" json:"coordY"`
+	Period      int     `db:"period" json:"period"`
+	PeriodTime  int     `db:"period_time" json:"periodTime"`
+	GameID      int     `db:"game_id" json:"gameID"`
 }
 
 // thanks to https://mholt.github.io/json-to-go/ for helping create this struct
