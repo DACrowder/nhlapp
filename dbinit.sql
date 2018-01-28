@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-drop database nhlapp;
-=======
 drop database if exists nhlapp;
->>>>>>> 3bd27c17140e68cd3a061fe59657ce9b70a03eac
 
 create database nhlapp;
 
