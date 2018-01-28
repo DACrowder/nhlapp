@@ -22,7 +22,7 @@ func CreateEventRoster(gameID string) {
 			WHERE e.game_id = ($1) AND
 			s.period = e.period AND
 			s.time_start <= e.period_time AND
-			s.time_end >= e.period_time`
+			s.time_end > e.period_time`
 
 	result, err := Db.Exec(q, gameID)
 	if err != nil {
