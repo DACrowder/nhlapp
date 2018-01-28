@@ -60,7 +60,8 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/shiftapi/v1/{game_id}", displayGame).Methods("GET")
+	r.HandleFunc("/shiftapi/v1/{game_id}", getPlayers).Methods("GET")
+	r.HandleFunc("/shiftapi/v1/{game_id}/player/{player_id}", displayGame).Methods("GET")
 
 	http.ListenAndServe(":9999", r)
 
