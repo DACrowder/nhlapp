@@ -27,8 +27,40 @@ type LineData struct {
 	Line      []int
 }
 
+type Lines struct {
+	team1Name string
+	team1Line []LineData
+	team2Name string
+	team2Line []LineData
+}
+
 func getLineShots(gameID string) error {
-	q := `select count(*) as data_count, players as line_array
+	q := `select distinct player1_team from event where game_id = $1 and player1_team != '';`
+	//get both teams
+	rows, err := Db.Queryx(q, gameID)
+	if err != nil {
+		return err
+	}
+
+	lines := Lines{}
+
+	if rows.Next() {
+		if err = rows.Scan(&lines.team1Name); err != nil {
+			return err
+		}
+	} else {
+		return err
+	}
+
+	if rows.Next() {
+		if err = rows.Scan(&lines.team2Name); err != nil {
+			return err
+		}
+	} else {
+		return err
+	}
+
+	q = `select count(*) as data_count, players as line_array
     from (select array_agg(q.player_id) as players, event_id
         from (select distinct roster.player_id, roster.event_id
                 from event_roster as roster,
@@ -41,18 +73,28 @@ func getLineShots(gameID string) error {
         group by q.event_id) as q2
     group by q2.players order by count(*)`
 
-	rows, err := Db.Queryx(q, gameID, "EDM")
+	/* get first team */
+	rows, err = Db.Queryx(q, gameID, lines.team1Name)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(rows)
+	for rows.Next() {
+		line := LineData{}
+		rows.StructScan(&line)
+		lines.team1Line = append(lines.team1Line, line)
+	}
+
+	/* get second game */
+	rows, err = Db.Queryx(q, gameID, lines.team2Name)
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		fmt.Printf("%d%v\n", line.DataCount, line.Line)
+		lines.team2Line = append(lines.team2Line, line)
 	}
+
+	fmt.Println(lines)
 
 	return nil
 }
