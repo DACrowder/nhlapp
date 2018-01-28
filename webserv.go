@@ -115,14 +115,17 @@ func getShots(w http.ResponseWriter, r *http.Request) {
 	CreateEventRoster(gameID)
 	buildLines(gameID)
 
-	fmt.Println("get shots")
-
-	err := getLineShots(gameID)
+	lines, err := getLineShots(gameID)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+	jsonOut, err := json.Marshal(lines)
+	if err != nil {
+		return
+	}
+	fmt.Fprintf(w, "%s\n", string(jsonOut))
 }
 
 func getAny(w http.ResponseWriter, r *http.Request) {
@@ -155,6 +158,16 @@ func getAny(w http.ResponseWriter, r *http.Request) {
 	buildLines(gameID)
 	buildLineWinLoss(gameID)
 
-	getWildCard(gameID, stat)
+	lines, err := getWildCard(gameID, stat)
 
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	jsonOut, err := json.Marshal(lines)
+	if err != nil {
+		return
+	}
+	fmt.Fprintf(w, "%s\n", string(jsonOut))
 }

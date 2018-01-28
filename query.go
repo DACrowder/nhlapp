@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 func getTeamShots(gameID string, team string) (int, error) {
@@ -22,42 +24,66 @@ func getTeamShots(gameID string, team string) (int, error) {
 }
 
 type LineData struct {
-	DataCount int    `db:"data_count"`
-	LineTmp   string `db:"line_array"`
-	Line      []int
+	DataCount int    `db:"data_count" json:"LineupCount"`
+	LineTmp   string `db:"line_array" json:"-"`
+	Line      []int  `json:"Lineup"`
 }
 
 type Lines struct {
-	team1Name string
-	team1Line []LineData
-	team2Name string
-	team2Line []LineData
+	Team1Name string     `json:"Team1Name"`
+	Team1Line []LineData `json:"Team1LineData"`
+	Team2Name string     `json:"Team2Name"`
+	Team2Line []LineData `json:"Team2LineData"`
 }
 
-func getLineShots(gameID string) error {
+//not safe use are your own risk
+func parseLine(lines Lines) {
+	for i, line := range lines.Team1Line {
+		lineTmp := strings.Split(line.LineTmp[1:len(line.LineTmp)-2], ",")
+		for _, p := range lineTmp {
+			pInt, err := strconv.Atoi(p)
+			if err != nil {
+				return
+			}
+			lines.Team1Line[i].Line = append(lines.Team1Line[i].Line, pInt)
+		}
+	}
+	for i, line := range lines.Team2Line {
+		lineTmp := strings.Split(line.LineTmp[1:len(line.LineTmp)-2], ",")
+		for _, p := range lineTmp {
+			pInt, err := strconv.Atoi(p)
+			if err != nil {
+				return
+			}
+			lines.Team2Line[i].Line = append(lines.Team2Line[i].Line, pInt)
+		}
+	}
+}
+
+func getLineShots(gameID string) (*Lines, error) {
 	q := `select distinct player1_team from event where game_id = $1 and player1_team != '';`
 	//get both teams
 	rows, err := Db.Queryx(q, gameID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lines := Lines{}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team1Name); err != nil {
-			return err
+		if err = rows.Scan(&lines.Team1Name); err != nil {
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team2Name); err != nil {
-			return err
+		if err = rows.Scan(&lines.Team2Name); err != nil {
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	q = `select count(*) as data_count, players as line_array
@@ -74,63 +100,65 @@ func getLineShots(gameID string) error {
     group by q2.players order by count(*)`
 
 	/* get first team */
-	rows, err = Db.Queryx(q, gameID, lines.team1Name)
+	rows, err = Db.Queryx(q, gameID, lines.Team1Name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team1Line = append(lines.team1Line, line)
+		lines.Team1Line = append(lines.Team1Line, line)
 	}
 
 	/* get second game */
-	rows, err = Db.Queryx(q, gameID, lines.team2Name)
+	rows, err = Db.Queryx(q, gameID, lines.Team2Name)
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team2Line = append(lines.team2Line, line)
+		lines.Team2Line = append(lines.Team2Line, line)
 	}
 
 	fmt.Println("------ TEAM 1 -------")
-	for _, lineSlice := range lines.team1Line {
+	for _, lineSlice := range lines.Team1Line {
 		fmt.Printf("%d  %s\n", lineSlice.DataCount, lineSlice.LineTmp)
 	}
 	fmt.Println("------ TEAM 2 -------")
 
-	for _, lineSlice := range lines.team2Line {
+	for _, lineSlice := range lines.Team2Line {
 		fmt.Printf("%d  %s\n", lineSlice.DataCount, lineSlice.LineTmp)
 	}
 
-	return nil
+	parseLine(lines)
+
+	return &lines, nil
 }
 
-func getWildCard(gameID string, category string) error {
+func getWildCard(gameID string, category string) (*Lines, error) {
 	q := `select distinct player1_team from event where game_id = $1 and player1_team != '';`
 	//get both teams
 	rows, err := Db.Queryx(q, gameID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	lines := Lines{}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team1Name); err != nil {
-			return err
+		if err = rows.Scan(&lines.Team1Name); err != nil {
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team2Name); err != nil {
-			return err
+		if err = rows.Scan(&lines.Team2Name); err != nil {
+			return nil, err
 		}
 	} else {
-		return err
+		return nil, err
 	}
 
 	q = `select count(*) as data_count, players as line_array
@@ -147,33 +175,35 @@ func getWildCard(gameID string, category string) error {
     group by q2.players order by count(*)`
 
 	/* get first team */
-	rows, err = Db.Queryx(q, gameID, category, lines.team1Name)
+	rows, err = Db.Queryx(q, gameID, category, lines.Team1Name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team1Line = append(lines.team1Line, line)
+		lines.Team1Line = append(lines.Team1Line, line)
 	}
 
 	/* get second game */
-	rows, err = Db.Queryx(q, gameID, category, lines.team2Name)
+	rows, err = Db.Queryx(q, gameID, category, lines.Team2Name)
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team2Line = append(lines.team2Line, line)
+		lines.Team2Line = append(lines.Team2Line, line)
 	}
-	fmt.Printf("\t------ %s [%s] -------\n", lines.team1Name, category)
-	for _, lineSlice := range lines.team1Line {
+	fmt.Printf("\t------ %s [%s] -------\n", lines.Team1Name, category)
+	for _, lineSlice := range lines.Team1Line {
 		fmt.Printf("%d  %s\n", lineSlice.DataCount, lineSlice.LineTmp)
 	}
-	fmt.Printf("\t------ %s [%s] -------\n", lines.team2Name, category)
-	for _, lineSlice := range lines.team2Line {
+	fmt.Printf("\t------ %s [%s] -------\n", lines.Team2Name, category)
+	for _, lineSlice := range lines.Team2Line {
 		fmt.Printf("%d  %s\n", lineSlice.DataCount, lineSlice.LineTmp)
 	}
 
-	return nil
+	parseLine(lines)
+
+	return &lines, nil
 }

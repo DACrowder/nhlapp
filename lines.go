@@ -42,7 +42,7 @@ func buildLines(gameID string) error {
 	lines := Lines{}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team1Name); err != nil {
+		if err = rows.Scan(&lines.Team1Name); err != nil {
 			return err
 		}
 	} else {
@@ -50,7 +50,7 @@ func buildLines(gameID string) error {
 	}
 
 	if rows.Next() {
-		if err = rows.Scan(&lines.team2Name); err != nil {
+		if err = rows.Scan(&lines.Team2Name); err != nil {
 			return err
 		}
 	} else {
@@ -71,7 +71,7 @@ func buildLines(gameID string) error {
     group by q2.players order by count(*)`
 
 	/* get first team */
-	rows, err = Db.Queryx(q, gameID, lines.team1Name)
+	rows, err = Db.Queryx(q, gameID, lines.Team1Name)
 	if err != nil {
 		return err
 	}
@@ -79,32 +79,32 @@ func buildLines(gameID string) error {
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team1Line = append(lines.team1Line, line)
+		lines.Team1Line = append(lines.Team1Line, line)
 	}
 
 	/* get second game */
-	rows, err = Db.Queryx(q, gameID, lines.team2Name)
+	rows, err = Db.Queryx(q, gameID, lines.Team2Name)
 
 	for rows.Next() {
 		line := LineData{}
 		rows.StructScan(&line)
-		lines.team2Line = append(lines.team2Line, line)
+		lines.Team2Line = append(lines.Team2Line, line)
 	}
 
-	for _, lineSlice := range lines.team1Line {
+	for _, lineSlice := range lines.Team1Line {
 		q := `INSERT INTO line (game_id, line_players, team)
 				VALUES ($1, $2, $3)`
-		_, err := Db.Exec(q, gameID, lineSlice.LineTmp, lines.team1Name)
+		_, err := Db.Exec(q, gameID, lineSlice.LineTmp, lines.Team1Name)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 	}
 
-	for _, lineSlice := range lines.team2Line {
+	for _, lineSlice := range lines.Team2Line {
 		q := `INSERT INTO line (game_id, line_players, team)
 				VALUES ($1, $2, $3)`
-		_, err := Db.Exec(q, gameID, lineSlice.LineTmp, lines.team2Name)
+		_, err := Db.Exec(q, gameID, lineSlice.LineTmp, lines.Team2Name)
 		if err != nil {
 			log.Println(err)
 			return err
