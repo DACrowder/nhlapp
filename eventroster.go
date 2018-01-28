@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -24,19 +23,20 @@ func CreateEventRoster(gameID string) {
 			s.time_start <= e.period_time AND
 			s.time_end > e.period_time`
 
-	result, err := Db.Exec(q, gameID)
+	_, err := Db.Exec(q, gameID)
 	if err != nil {
 		if !IsUniqueViolation(err) {
-			log.Println(err)
+			log.Fatal(err)
 			return
 		}
 	}
-	count, err := result.RowsAffected()
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	fmt.Printf("%d row(s) created.\n", count)
+	/*
+		count, err := result.RowsAffected()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		fmt.Printf("%d row(s) created.\n", count)
+	*/
 
 }

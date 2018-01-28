@@ -59,13 +59,13 @@ func scrape(gameID string) {
 	}
 
 	for _, shiftSlice := range data.Data {
-		position, err := getPlayerPosition(shiftSlice.PlayerID)
+		//position, err := getPlayerPosition(shiftSlice.PlayerID)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 		q := `INSERT INTO shift (game_id, player_id, period, time_start, time_end, team, player_pos)
-						VALUES ($1, $2, $3, $4, $5, $6, $7)`
+						VALUES ($1, $2, $3, $4, $5, $6, 'ignore')`
 		startInt, err := TimeConvert(shiftSlice.StartTime)
 		if err != nil {
 			log.Println(err)
@@ -76,7 +76,8 @@ func scrape(gameID string) {
 			log.Println(err)
 			return
 		}
-		_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt, shiftSlice.TeamAbbrev, position)
+		//_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt, shiftSlice.TeamAbbrev, position)
+		_, err = Db.Exec(q, shiftSlice.GameID, shiftSlice.PlayerID, shiftSlice.Period, startInt, stopInt, shiftSlice.TeamAbbrev)
 		if err != nil {
 			if IsUniqueViolation(err) {
 				continue
