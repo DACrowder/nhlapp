@@ -100,3 +100,22 @@ func getPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func getShots(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("get shots")
+
+	err := getLineShots(gameID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+}
