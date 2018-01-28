@@ -113,6 +113,7 @@ func getShots(w http.ResponseWriter, r *http.Request) {
 	scrape(gameID)
 	GetEvents(gameID)
 	CreateEventRoster(gameID)
+	buildLines(gameID)
 
 	fmt.Println("get shots")
 
@@ -151,6 +152,7 @@ func getAny(w http.ResponseWriter, r *http.Request) {
 	scrape(gameID)
 	GetEvents(gameID)
 	CreateEventRoster(gameID)
+	buildLines(gameID)
 
 	getWildCard(gameID, stat)
 
