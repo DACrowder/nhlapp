@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -61,11 +62,11 @@ func main() {
 
 	r.HandleFunc("/shiftapi/v1/{game_id}", displayGame).Methods("GET")
 
-	//http.ListenAndServe(":9999", r)
+	http.ListenAndServe(":9999", r)
 
-	scrape("2017020028")
+	//scrape("2017020028")
 
-	GetEvents("2017020028")
+	//GetEvents("2017020028")
 
 	Db.Close()
 }
