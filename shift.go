@@ -36,7 +36,6 @@ type shift struct {
 // Scrape pull shift data from nhl API
 func scrape(gameID string) {
 	apiURL := fmt.Sprintf("http://www.nhl.com/stats/rest/shiftcharts?cayenneExp=gameId=%s", gameID)
-	fmt.Println(apiURL)
 	client := &http.Client{}
 
 	request, err := http.NewRequest("GET", apiURL, nil)
