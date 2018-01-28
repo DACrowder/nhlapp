@@ -110,6 +110,10 @@ func getShots(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	scrape(gameID)
+	GetEvents(gameID)
+	CreateEventRoster(gameID)
+
 	fmt.Println("get shots")
 
 	err := getLineShots(gameID)

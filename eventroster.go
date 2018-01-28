@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -19,24 +20,26 @@ func CreateEventRoster(gameID string) {
 			SELECT e.game_id, e.event_id, s.team, s.player_id
 			FROM event AS e, shift AS s
 			WHERE e.game_id = ($1) AND
+			s.game_id = e.game_id AND
 			s.period = e.period AND
 			s.time_start <= e.period_time AND
 			s.time_end > e.period_time`
 
-	_, err := Db.Exec(q, gameID)
+	result, err := Db.Exec(q, gameID)
 	if err != nil {
+		log.Println(err)
 		if !IsUniqueViolation(err) {
 			log.Fatal(err)
 			return
 		}
 	}
-	/*
+	if result != nil {
 		count, err := result.RowsAffected()
 		if err != nil {
 			log.Println(err)
 			return
 		}
 		fmt.Printf("%d row(s) created.\n", count)
-	*/
+	}
 
 }

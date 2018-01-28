@@ -5,7 +5,7 @@ create database nhlapp;
 \c nhlapp
 
 create table event (
-    event_id int PRIMARY KEY,
+    event_id int,
     event_type text,
     player1_id int,
     player2_id int,
@@ -17,7 +17,7 @@ create table event (
     period int,
     period_time int,
     game_id int,
-    UNIQUE (game_id, event_id)
+    PRIMARY KEY (game_id, event_id)
 );
 
 create table shift (
@@ -28,7 +28,7 @@ create table shift (
     time_end int,
     team text,
     player_pos text,
-    UNIQUE(game_id, player_id, period, time_start, time_end, team)
+    PRIMARY KEY (game_id, player_id, period, time_start, time_end)
 );
 
 create table event_roster (
