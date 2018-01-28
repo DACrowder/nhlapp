@@ -50,8 +50,6 @@ func main() {
 		return
 	}
 
-	fmt.Printf("%v\n", conf)
-
 	Db, err = sqlx.Connect("postgres", conf.ConnStr)
 	if err != nil {
 		//cannot connect to database
