@@ -207,3 +207,15 @@ func getWildCard(gameID string, category string) (*Lines, error) {
 
 	return &lines, nil
 }
+
+func createLineups(gameID string) {
+	q := `insert into lineups (line_players, game_id)
+        select distinct line_players, game_id from event_winners where game_id = $1`
+
+	_, err := Db.Exec(q, gameID)
+	if err != nil {
+		return
+	}
+
+	//populate
+}

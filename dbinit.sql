@@ -64,3 +64,18 @@ create table event_losers (
     PRIMARY KEY (line_players, team, event_id, game_id)
 );
 
+create table lineups (
+    line_players text,
+    team text,
+    game_id int,
+    hits int,
+    missed_shot int,
+    blocked_shot int,
+    shot int,
+    goal int,
+    faceoff int,
+    takeaway int,
+    penalty int,
+    giveaway int,
+    PRIMARY KEY (line_players, game_id)
+);

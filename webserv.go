@@ -183,6 +183,18 @@ func getAny(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s\n", string(jsonOut))
 }
 
+func lineScores(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	createLineups(gameID)
+}
+
 func getMatchup(w http.ResponseWriter, r *http.Request) {
 	options := r.URL.Query()
 
@@ -255,5 +267,4 @@ func getMatchup(w http.ResponseWriter, r *http.Request) {
 		jSonOut, _ := json.Marshal(dbConv)
 		fmt.Fprintf(w, "%s\n", string(jSonOut))
 	}
-
 }
