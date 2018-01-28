@@ -14,14 +14,15 @@ func displayGame(w http.ResponseWriter, r *http.Request) {
 
 	category := "SHOT"
 
-	gameID := vars["game_id"]
-	if gameID == "" {
-		w.WriteHeader(http.StatusNotFound)
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	playerID := vars["player_id"]
-	if playerID == "" {
-		w.WriteHeader(http.StatusNotFound)
+
+	playerID, ok := vars["player_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -49,9 +50,9 @@ func displayGame(w http.ResponseWriter, r *http.Request) {
 func getPlayers(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	gameID := vars["game_id"]
-	if gameID == "" {
-		w.WriteHeader(http.StatusNotFound)
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
