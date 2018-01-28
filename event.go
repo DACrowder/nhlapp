@@ -71,7 +71,7 @@ type Event struct {
 					ID      int    `json:"id"`
 					Name    string `json:"name"`
 					Link    string `json:"link"`
-					TriCode string `json:"triCode"`
+					TriCode string `json:"triCode"` // player1_team
 				} `json:"team,omitempty"`
 			} `json:"allPlays"`
 		} `json:"plays"`
@@ -133,10 +133,10 @@ func GetEvents(gameID string) error {
 		}
 
 		q := `INSERT INTO event (event_id, event_type, player1_id, player2_id,
-		                player1_type, player2_type, coord_x, coord_y, period, period_time, game_id)
-		                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
+		                player1_type, player2_type, coord_x, coord_y, period, period_time, game_id, player1_team)
+		                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`
 		_, err := Db.Exec(q, cur.About.EventIdx, cur.Result.EventTypeID, player1ID, player2ID,
-			player1Type, player2Type, cur.Coordinates.X, cur.Coordinates.Y, cur.About.Period, time, data.GamePk)
+			player1Type, player2Type, cur.Coordinates.X, cur.Coordinates.Y, cur.About.Period, time, data.GamePk, cur.Team.TriCode)
 		if err != nil {
 			if IsUniqueViolation(err) {
 				continue
