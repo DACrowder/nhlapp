@@ -62,6 +62,7 @@ func main() {
 	r.HandleFunc("/shiftapi/v1/{game_id}/player/{player_id}", displayGame).Methods("GET")
 	r.HandleFunc("/shiftapi/v1/{game_id}/shots", getShots).Methods("GET")
 	r.HandleFunc("/shiftapi/v1/{game_id}/", getAny).Methods("GET")
+	r.HandleFunc("/shiftapi/v1/{game_id}/winloss/", getMatchup).Methods("GET")
 
 	http.ListenAndServe(":9999", r)
 

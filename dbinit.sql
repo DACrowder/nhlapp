@@ -36,7 +36,7 @@ create table event_roster (
     event_id int,
     team text,
     player_id int,
-    UNIQUE (game_id, event_id, team, player_id)
+    PRIMARY KEY (game_id, event_id, team, player_id)
 );
 
 create table line (
