@@ -8,6 +8,22 @@ import (
 	"time"
 )
 
+type EventOut struct {
+	EventID     int    `db:"event_id" json:"eventID"`
+	EventType   string `db:"event_type" json:"eventType"`
+	Player1ID   int    `db:"player1_id" json:"player1ID"`
+	Player2ID   int    `db:"player2_id" json:"player2ID"`
+	Player1Type string `db:"player1_type" json:"player1Type"`
+	Player2Type string `db:"player2_type" json:"player2Type"`
+	Player1Team string `db:"player1_team" json:"player1Team"`
+	Player2Team string `db:"player2_team" json:"player2Team"`
+	CoordX      int    `db:"coord_x" json:"coordX"`
+	CoordY      int    `db:"coord_y" json:"coordY"`
+	Period      int    `db:"period" json:"period"`
+	PeriodTime  int    `db:"period_time" json:"periodTime"`
+	GameID      int    `db:"game_id" json:"gameID"`
+}
+
 // thanks to https://mholt.github.io/json-to-go/ for helping create this struct
 type Event struct {
 	GamePk   int    `json:"gamePk"` // game_id
@@ -52,6 +68,12 @@ type Event struct {
 					} `json:"player"`
 					PlayerType string `json:"playerType"` // playerx_type
 				} `json:"players,omitempty"`
+				Team struct {
+					ID      int    `json:"id"`
+					Name    string `json:"name"`
+					Link    string `json:"link"`
+					TriCode string `json:"triCode"`
+				} `json:"team,omitempty"`
 			} `json:"allPlays"`
 		} `json:"plays"`
 	} `json:"liveData"`
