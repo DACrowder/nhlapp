@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type eventOut struct {
+type EventOut struct {
 	EventID     int    `db:"event_id" json:"eventID"`
 	EventType   string `db:"event_type" json:"eventType"`
 	Player1ID   int    `db:"player1_id" json:"player1ID"`
