@@ -12,9 +12,10 @@ import (
 func displayGame(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	gameID := vars["game_id"]
-	if gameID == "" {
-		w.WriteHeader(http.StatusNotFound)
+	gameID, ok := vars["game_id"]
+	if !ok {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 
 	scrape(gameID)
