@@ -205,6 +205,12 @@ func getMatchup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	scrape(gameID)
+	GetEvents(gameID)
+	CreateEventRoster(gameID)
+	buildLines(gameID)
+	buildLineWinLoss(gameID)
+
 	// situations this line lost
 	qLost := `SELECT distinct l.event_id, l.line_players  FROM  event_winners AS l,
 		(SELECT event_id FROM event_losers WHERE
