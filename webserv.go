@@ -153,6 +153,7 @@ func getAny(w http.ResponseWriter, r *http.Request) {
 	GetEvents(gameID)
 	CreateEventRoster(gameID)
 	buildLines(gameID)
+	buildLineWinLoss(gameID)
 
 	getWildCard(gameID, stat)
 

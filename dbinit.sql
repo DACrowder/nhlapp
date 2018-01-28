@@ -43,8 +43,24 @@ create table line (
     line_id serial,
     game_id int,
     line_players text,
+    event_id int,
     team text,
     PRIMARY KEY (game_id, line_players)
 );
 
+create table event_winners (
+    line_players text,
+    team text,
+    event_id int,
+    game_id int,
+    PRIMARY KEY (line_players, team, event_id, game_id)
+);
+
+create table event_losers (
+    line_players text,
+    team text,
+    event_id int,
+    game_id int,
+    PRIMARY KEY (line_players, team, event_id, game_id)
+);
 
