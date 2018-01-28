@@ -10,9 +10,8 @@ create table event (
     player1_type text,
     player2_type text,
     player1_team text,
-    player2_team text,
-    coord_x int,
-    coord_y int,
+    coord_x float,
+    coord_y float,
     period int,
     period_time int,
     game_id int,
@@ -25,7 +24,14 @@ create table shift (
     period int,
     time_start int,
     time_end int,
-    UNIQUE(game_id, player_id, period, time_start, time_end)
+    team text,
+    UNIQUE(game_id, player_id, period, time_start, time_end, team)
 );
 
-
+create table event_roster (
+    game_id int,
+    event_id int,
+    team text,
+    player_id int
+    /*UNIQUE (game_id, event_id, team, player_id)*/
+);
